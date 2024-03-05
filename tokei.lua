@@ -2,7 +2,6 @@
 -- view clock
 -- E3 - change timezone
 -- K2 - sound on/off
-
 -- load the polyperc
 engine.name = 'PolyPerc'
 
@@ -10,34 +9,63 @@ engine.name = 'PolyPerc'
 selected_time_zone = 2
 
 -- Table of world time zones
-local world_time_zones = {
-    { name = "UTC",     offset = 0 },
-    { name = "JST/KST", offset = 9 },
-    { name = "PST",     offset = -8 },
-    { name = "EST",     offset = -5 },
-    { name = "CST",     offset = -6 },
-    { name = "GMT",     offset = 0 },
-    { name = "AEST",    offset = 10 },
-    { name = "BST",     offset = 1 },
-    { name = "IST",     offset = 5.5 },
-    { name = "CET",     offset = 1 },
-    { name = "MSK",     offset = 3 },
-    { name = "SGT",     offset = 8 },
-    { name = "ART",     offset = -3 },
-    { name = "AKST",    offset = -9 },
-    { name = "HST",     offset = -10 },
-    { name = "NZST",    offset = 12 }
-}
+local world_time_zones = {{
+    name = "UTC",
+    offset = 0
+}, {
+    name = "JST/KST",
+    offset = 9
+}, {
+    name = "PST",
+    offset = -8
+}, {
+    name = "EST",
+    offset = -5
+}, {
+    name = "CST",
+    offset = -6
+}, {
+    name = "GMT",
+    offset = 0
+}, {
+    name = "AEST",
+    offset = 10
+}, {
+    name = "BST",
+    offset = 1
+}, {
+    name = "IST",
+    offset = 5.5
+}, {
+    name = "CET",
+    offset = 1
+}, {
+    name = "MSK",
+    offset = 3
+}, {
+    name = "SGT",
+    offset = 8
+}, {
+    name = "ART",
+    offset = -3
+}, {
+    name = "AKST",
+    offset = -9
+}, {
+    name = "HST",
+    offset = -10
+}, {
+    name = "NZST",
+    offset = 12
+}}
 
 -- Initialize variables
 state = true
 intClock = 0
 half_seconds = false -- Initialize half_seconds to false
 
-
 clockView = 0
 dayView = 0
-
 
 -- init synth
 function initSynth()
@@ -51,9 +79,9 @@ end
 function init()
     initSynth()
 
-    frame()                             -- Call the frame function
+    frame() -- Call the frame function
     framer = metro.init(frame, 0.5, -1) -- Set up the metro to call the frame function every 30ms
-    framer:start()                      -- Start the metro
+    framer:start() -- Start the metro
 end
 
 -- Frame function to update the time and date
@@ -75,14 +103,12 @@ function frame()
     -- Format the time as "hh:mm"
     local formatted_time = string.format("%02d:%02d:%02d", hours, minutes, seconds)
 
-
     -- Check if seconds is xx:xx:00 or xx:xx:30
     if seconds % 60 == 0 or seconds % 60 == 30 then
         half_seconds = true
     else
         half_seconds = false
     end
-
 
     -- Calculate date from the UNIX timestamp
     local unix_epoch = 1970 * 365 * 24 * 60 * 60 -- Calculate the number of seconds from 1970 to the present
@@ -108,9 +134,17 @@ function frame()
         end
     end
 
+    local feb_days
+    if (years % 4 == 0 and years % 100 ~= 0) or years % 400 == 0 then
+        feb_days = 29
+    else
+        feb_days = 28
+    end
+    
+    local days_in_month = {31, feb_days, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+
     -- Calculate the days in each month
-    local days_in_month = { 31, 28 + ((years % 4 == 0 and years % 100 ~= 0) or years % 400 == 0 and 1 or 0), 31, 30, 31,
-        30, 31, 31, 30, 31, 30, 31 }
+    local days_in_month = {31, feb_days, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 
     -- Calculate the month and day
     for i = 1, 12 do
@@ -148,8 +182,8 @@ end
 
 -- Redraw function to update the screen
 function redraw()
-    screen.clear()  -- Clear the screen
-    screen.aa(0)    -- Disable anti-aliasing
+    screen.clear() -- Clear the screen
+    screen.aa(0) -- Disable anti-aliasing
     screen.level(2) -- Set the screen brightness
     screen.font_face(1)
 
@@ -158,9 +192,7 @@ function redraw()
     screen.move(0, 26)
     screen.text(world_time_zones[selected_time_zone].name)
 
-
     screen.level(10) -- Set the screen brightness
-
 
     -- Display the date
     screen.font_size(14)
@@ -171,8 +203,6 @@ function redraw()
     screen.font_size(24)
     screen.move(0, 60)
     screen.text(clockView)
-
-
 
     -- Display the play state
     screen.font_size(8)
