@@ -141,8 +141,6 @@ function frame()
         feb_days = 28
     end
     
-    local days_in_month = {31, feb_days, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
-
     -- Calculate the days in each month
     local days_in_month = {31, feb_days, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 
